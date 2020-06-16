@@ -1,9 +1,7 @@
 ---
-bmc_ip: 172.29.160.22
+bmc_ip: https://172.29.160.22
 bmc_user: root
 bmc_pwd: Huawei12#$
-system_id: 1
-chassis_id: 1
 attr_name: 3
 pro_seq: 4
 url_seq: 5

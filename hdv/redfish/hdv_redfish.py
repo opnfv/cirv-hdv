@@ -192,7 +192,7 @@ def get_component_ids_excel(excel_file):
     return id_info_list
 
 
-def create_real_url(url_value, id_dict, config_file):
+def create_real_url(url_value, id_dict, config_file, key_flag_dict, http_handler, bmc_ip):
     '''
     create the real url
     either a static url, or a replaced url by depended_id
@@ -204,28 +204,48 @@ def create_real_url(url_value, id_dict, config_file):
     pattern = re.compile(regexp, DT)
     LOGGER.info("url_value %s", url_value)
     matches = list(pattern.finditer(url_value))
+
     for match in matches:
         value = match.groupdict()
-        if value['var'] in config_file:
-            url_value = url_value.replace('{' + str(value['var']) + '}',
-                                          str(config_file[value['var']]))
+        #stripping out value['var'] from end of the URL
+        parent_url = match.group().rstrip('{' +value['var']+ '}')
 
-        elif value['var'] in id_dict:
+        if value['var'] in id_dict:
             replaced = 1
-            instance_list = id_dict[value['var']]
-            for instance in instance_list:
-                sgl_url = url_value.replace('{' + str(value['var']) + '}',
-                                            str(instance))
-                LOGGER.debug("replaced url value %s", sgl_url)
-                url_list.append(sgl_url)
-        else:
+            url_list = id_dict[value['var']].copy()
+
+        elif value['var'] in key_flag_dict:
             replaced = 2
+            if(len(url_list) == 0):
+                url_list.append(parent_url)
+            else:
+                for index in range(len(url_list)):
+                    url_list[index] = url_list[index] + parent_url
+
+            response_list = handle_depend_url("GET", url_list, http_handler, bmc_ip)
+            url_list = create_obj_id_list(key_flag_dict[value['var']], response_list)
+
+            if url_list is None or url_list.__len__() == 0:
+                LOGGER.error("%s,%s", ERROR_CODE['E300003'], value['var'])
+                continue
+            id_dict.update({value['var']: url_list.copy()})
+            LOGGER.debug("id_dict content is %s", id_dict)
+        else:
+            replaced = 3
             LOGGER.error("%s for parameter %s",
-                         ERROR_CODE['E300002'], value['var'])
+                    ERROR_CODE['E300002'], value['var'])
+        
+        LOGGER.debug('url_list content is %s', url_list)
+    
     # combine single case with list case together.
     if replaced == 0:
         LOGGER.info("adding static url %s into list", url_value)
         url_list.append(url_value)
+
+    for index in range(len(url_list)):
+        url_list[index] = url_list[index] + url_value.split('}')[-1]
+    
+    LOGGER.debug("created real url list is %s", url_list)
     return url_list
 
 
@@ -247,14 +267,14 @@ def execute_get_url(url, http_handler):
     return ret_dict
 
 
-def handle_depend_url(method, url_list, http_handler):
+def handle_depend_url(method, url_list, http_handler, bmc_ip):
     '''
     run request url in url_list and collect the response as list
     '''
     response_list = []
     if method == 'GET':
         for url_case in url_list:
-            response = execute_get_url(url_case, http_handler)
+            response = execute_get_url(bmc_ip + url_case, http_handler)
             response_list.append(response)
     elif method == 'POST':
         pass
@@ -301,35 +321,6 @@ def create_obj_id_list(key_flags, response_list):
         else:
             LOGGER.error("%s %s", ERROR_CODE['E400003'], key_flags)
     return end_id_list
-
-
-def get_depend_id(config_file, http_handler, depend_ids):
-    '''
-    @param mode: yaml or excel,default value "excel"
-    parse the component id list
-    build up the id resource for each component_id
-    return: id_dict like {component_id:[obj_list]}
-    '''
-    id_dict = {}
-    for case in depend_ids:
-        component_name = case.get('component_id')
-        LOGGER.info("parsing component %s", component_name)
-        pro_value = case.get('pro_value')
-        url_value = case.get('url_value')
-        key_flags = case.get('key_flags')
-        # url_list = []
-        url_list = create_real_url(url_value, id_dict, config_file)
-        # response_list = []
-        response_list = handle_depend_url(pro_value, url_list, http_handler)
-        # end_id_list = []
-        end_id_list = create_obj_id_list(key_flags, response_list)
-        if end_id_list is None or end_id_list.__len__() == 0:
-            LOGGER.error("%s,%s", ERROR_CODE['E300003'], component_name)
-            continue
-        id_dict.update({component_name: end_id_list})
-    LOGGER.debug("id_dict content is %s", id_dict)
-    return id_dict
-
 
 def read_row(input_ws, row, config_file):
     '''
@@ -392,25 +383,26 @@ def execute_patch_url(body, http_handler, url):
     return ret_dict
 
 
-def handle_final_url(method, url_list, req_body=None, http_handler=None):
+def handle_final_url(bmc_ip, method, url_list, req_body=None, http_handler=None):
     '''execute the requested url to get the response
     '''
+
     response_list = []
     if method == 'GET':
         for url_case in url_list:
-            rsp = execute_get_url(url_case, http_handler)
+            rsp = execute_get_url(bmc_ip + url_case, http_handler)
             response_list.append(rsp)
     elif method == 'POST':
         if len(url_list) > 1:
             LOGGER.error(ERROR_CODE['E100002'])
             return None
         url_value = url_list[0]
-        rsp = execute_post_url(req_body, http_handler, url_value)
+        rsp = execute_post_url(req_body, http_handler, bmc_ip + url_value)
         response_list.append(rsp)
     elif method == 'PATCH':
         for url_case in url_list:
             LOGGER.info(url_case)
-            temp = execute_patch_url(req_body, http_handler, url_case)
+            temp = execute_patch_url(req_body, http_handler, bmc_ip + url_case)
             if temp is not None:
                 response_list.append(temp)
     elif method == 'DELETE':
@@ -512,31 +504,32 @@ def write_result_2_excel(config_file, input_ws, row, flag, result):
 
 
 def execute_final_url(config_file, depends_id, http_handler,
-                      method, url, req_body):
+                      method, url, req_body, key_flag_dict, bmc_ip):
     '''
     execute final url to get the request result
     '''
-    url_list = create_real_url(url, depends_id, config_file)
-    rsp_list = handle_final_url(method, url_list, req_body, http_handler)
+    url_list = create_real_url(url, depends_id, config_file, key_flag_dict, http_handler, bmc_ip)
+    rsp_list = handle_final_url(bmc_ip, method, url_list, req_body, http_handler)
     return rsp_list
 
 
-def run_test_case_yaml(config_file, case_file, depends_id, http_handler):
+def run_test_case_yaml(config_file, case_file, depends_id, http_handler, bmc_ip):
     '''run test case from cases.yaml
     '''
     LOGGER.info("############### start perform test case #################")
     cases_result = []
     cases = read_yaml(case_file)
     for case in cases:
-        method, url, req_body, expected_code, expected_value, tc_name \
+        method, url, req_body, expected_code, expected_value, tc_name, key_flag_dict \
             = case['method'], case['url'], case['request_body'], \
-            case['expected_code'], case['expected_result'], case['case_name']
+            case['expected_code'], case['expected_result'], case['case_name'], case['key_flag_dict']
 
         expected_value = literal_eval(expected_value)
+        
         flag = 0
         final_rst = {}
         rsp_list = execute_final_url(config_file, depends_id,
-                                     http_handler, method, url, req_body)
+                                     http_handler, method, url, req_body, key_flag_dict, bmc_ip)
         if rsp_list is not None and len(rsp_list) > 0:
             return_value_list, return_code_list, final_rst, flag = \
                 parse_test_result(
@@ -639,7 +632,7 @@ def run(conf_file, case_excel_file=None, depend_yaml_file=None,
     ACCOUNT_INFO.update({"UserName": bmc_user})
     ACCOUNT_INFO.update({"Password": bmc_pwd})
 
-    url = "https://{0}/redfish/v1/SessionService/Sessions".format(bmc_ip)
+    url = "{0}/redfish/v1/SessionService/Sessions".format(bmc_ip)
     x_auth_token = get_token(http_handler, url)
     LOGGER.info("x_auth_token: %s", x_auth_token)
 
@@ -649,16 +642,8 @@ def run(conf_file, case_excel_file=None, depend_yaml_file=None,
 
     HEADERS.update({"X-Auth-Token": x_auth_token})
     id_info_list = None
-    if file_mode == "excel":
-        id_info_list = get_component_ids_excel(case_excel_file)
-    elif file_mode == "yaml":
-        id_info_list = get_component_ids_yaml(depend_yaml_file)
-    else:
-        LOGGER.error("%s,%s", ERROR_CODE['E200001'], file_mode)
-        return None
 
-    # get dependent id
-    depends_id = get_depend_id(config_file, http_handler, id_info_list)
+    depends_id = {}
 
     # read the test case sheet and perform test
     if file_mode == "excel":
@@ -666,7 +651,7 @@ def run(conf_file, case_excel_file=None, depend_yaml_file=None,
                             case_excel_file, depends_id, http_handler)
     elif file_mode == "yaml":
         run_test_case_yaml(config_file,
-                           case_yaml_file, depends_id, http_handler)
+                           case_yaml_file, depends_id, http_handler, bmc_ip)
     else:
         LOGGER.error("%s,%s", ERROR_CODE['E200001'], file_mode)
         return None
