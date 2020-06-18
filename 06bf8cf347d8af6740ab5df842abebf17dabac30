@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8d25960b_3c0e44d7",
+        "filename": "hdv/redfish/conf/config.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2020-06-18T09:18:04Z",
+      "side": 0,
+      "message": "remove usless variable.",
+      "range": {
+        "startLine": 12,
+        "startChar": 6,
+        "endLine": 12,
+        "endChar": 7
+      },
+      "revId": "06bf8cf347d8af6740ab5df842abebf17dabac30",
+      "serverId": "bbac25d2-bf60-4904-9ba8-a72fc000d6c5",
+      "unresolved": true
+    }
+  ]
+}
