@@ -34,15 +34,8 @@ def parse_args():
                         version='%(prog)s 0.1', help="show tool version")
     parser.add_argument('--config', type=str, default="./conf/config.yaml",
                         help="given global config.yaml file")
-    parser.add_argument('--file_type', type=str, default="excel",
-                        help="config file type, [yaml|excel],default is excel")
-    parser.add_argument('--case_yaml', type=str, default="./conf/cases.yaml",
-                        help="case yaml file, uesd if file_type = yaml")
-    parser.add_argument('--depends_yaml', type=str,
-                        default="./conf/depends.yaml",
-                        help="depends yaml file,uesd if file_type = yaml")
-    parser.add_argument('--case_excel', type=str, default="./conf/cases.xlsx",
-                        help="excel case file used if file_type = excel")
+    parser.add_argument('--case', type=str, default="./conf/cases.yaml",
+                        help="case yaml file")
     args = parser.parse_args()
     return args
 
@@ -52,8 +45,7 @@ def main():
     main function
     '''
     args = parse_args()
-    run_case(args.config, args.case_excel, args.depends_yaml, args.case_yaml,
-             args.file_type)
+    run_case(args.config, args.case)
 
 
 if __name__ == "__main__":
