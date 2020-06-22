@@ -167,31 +167,6 @@ def get_component_ids_yaml(file):
         return None
     return yaml.load(open(file, "r"))
 
-
-def get_component_ids_excel(excel_file):
-    '''
-    get the component_id settings from the excel sheet2
-    the componnet_id is the parent id of the hardware resource of sheet1
-    '''
-    input_file = load_workbook(excel_file)
-    input_ws = input_file[input_file.sheetnames[1]]
-    cell_key = []
-    id_info_list = []
-    for i in range(1, 5):
-        cell_key.append(input_ws.cell(row=1, column=i).value)
-    row = 2
-    while input_ws.cell(row=row, column=1).value:
-        cell_value = []
-        for i in range(1, 5):
-
-            cell_value.append(input_ws.cell(row=row, column=i).value.
-                              encode("utf8").decode("utf8").replace('\n', ''))
-        cell_dict = dict(zip(cell_key, cell_value))
-        row += 1
-        id_info_list.append(cell_dict)
-    return id_info_list
-
-
 def create_real_url(url_value, id_dict, config_file, key_flag_dict, http_handler, bmc_ip):
     '''
     create the real url
@@ -223,6 +198,7 @@ def create_real_url(url_value, id_dict, config_file, key_flag_dict, http_handler
                     url_list[index] = url_list[index] + parent_url
 
             response_list = handle_depend_url("GET", url_list, http_handler, bmc_ip)
+            
             url_list = create_obj_id_list(key_flag_dict[value['var']], response_list)
 
             if url_list is None or url_list.__len__() == 0:
@@ -321,32 +297,6 @@ def create_obj_id_list(key_flags, response_list):
         else:
             LOGGER.error("%s %s", ERROR_CODE['E400003'], key_flags)
     return end_id_list
-
-def read_row(input_ws, row, config_file):
-    '''
-    read a row value
-    '''
-    pro_value = input_ws.cell(row=row, column=config_file["pro_seq"]).value
-    url_value = input_ws.cell(row=row, column=config_file["url_seq"]).value
-    req_body_value = input_ws.cell(
-        row=row, column=config_file["req_body_seq"]).value
-    expect_return_code = \
-        input_ws.cell(
-            row=row, column=config_file["expect_return_code_seq"]).value
-    expect_return_value = \
-        input_ws.cell(
-            row=row, column=config_file["expect_return_value_seq"]).value
-    attr_name = input_ws.cell(row=row, column=config_file["attr_name"]).value
-
-    if req_body_value is not None:
-        req_body_value = literal_eval(req_body_value)
-    if expect_return_code is not None:
-        expect_return_code = int(expect_return_code)
-    if expect_return_value is not None:
-        expect_return_value = literal_eval(expect_return_value)
-    return pro_value, url_value, req_body_value, expect_return_code,\
-        expect_return_value, attr_name
-
 
 def execute_post_url(body, handler, url):
     '''
@@ -484,25 +434,6 @@ def parse_test_result(expect_return_value, expect_return_code,
     return return_value_list, return_code_list, final_result, flag
 
 
-def write_result_2_excel(config_file, input_ws, row, flag, result):
-    '''
-    write the result back to excel
-    '''
-    if not result:
-        input_ws.cell(row=row, column=config_file["detail_result"],
-                      value=str('N/A'))
-    else:
-        input_ws.cell(row=row, column=config_file["detail_result"],
-                      value=str(result))
-    if flag == 0:
-        input_ws.cell(row=row, column=config_file["final_result"],
-                      value=str("Success"))
-    else:
-        input_ws.cell(row=row, column=config_file["final_result"],
-                      value=str("Failure"))
-    return row
-
-
 def execute_final_url(config_file, depends_id, http_handler,
                       method, url, req_body, key_flag_dict, bmc_ip):
     '''
@@ -520,11 +451,11 @@ def run_test_case_yaml(config_file, case_file, depends_id, http_handler, bmc_ip)
     cases_result = []
     cases = read_yaml(case_file)
     for case in cases:
+        if(case['enabled'] == False):
+            continue
         method, url, req_body, expected_code, expected_value, tc_name, key_flag_dict \
             = case['method'], case['url'], case['request_body'], \
             case['expected_code'], case['expected_result'], case['case_name'], case['key_flag_dict']
-
-        expected_value = literal_eval(expected_value)
         
         flag = 0
         final_rst = {}
@@ -545,7 +476,6 @@ def run_test_case_yaml(config_file, case_file, depends_id, http_handler, bmc_ip)
             str(final_rst) if len(final_rst) > 0 else "N/A"
         cases_result.append(case)
         LOGGER.info("writing test final_rst for case %s", tc_name)
-
     write_result_2_yaml(cases_result)
 
     LOGGER.info("############### end perform test case ###################")
@@ -569,56 +499,10 @@ def write_result_2_yaml(result):
                    explicit_start=True)
 
 
-def run_test_case_excel(config_file, case_file, depends_id, http_handler):
-    '''
-    perform the test case one by one,
-    and write test final_result back to the excel.
-    '''
-    LOGGER.info("############### start perform test case #################")
-    input_file = load_workbook(case_file)
-    input_ws = input_file[input_file.sheetnames[0]]
-
-    row = 2
-    while input_ws.cell(row=row, column=1).value:
-        method, url, req_body, expected_code, expected_value, tc_name \
-            = read_row(input_ws, row, config_file)
-
-        LOGGER.info("run test case ##%s##", tc_name)
-        if tc_name == "configure BMC ip in static, ipv4":
-            LOGGER.debug("debug")
-        flag = 0
-        final_result = {}
-        rsp_list = []
-        rsp_list = execute_final_url(config_file, depends_id, http_handler,
-                                     method, url, req_body)
-        if rsp_list is not None and len(rsp_list) > 0:
-            return_value_list, return_code_list, final_result, flag = \
-                parse_test_result(expected_value, expected_code,
-                                  rsp_list, final_result)
-            final_result.update({'info': return_value_list})
-            LOGGER.debug("return_code_list:%s", return_code_list)
-            input_ws.cell(row=row, column=config_file["return_code_seq"],
-                          value=str(return_code_list))
-        else:
-            LOGGER.error("%s", ERROR_CODE['E600001'])
-            flag += 1
-
-        LOGGER.info("writing test final_result for row %s", row)
-        row = write_result_2_excel(
-            config_file, input_ws, row, flag, final_result)
-        row += 1
-        input_file.save(case_file)
-    LOGGER.info("############### end perform test case ###################")
-
-
-def run(conf_file, case_excel_file=None, depend_yaml_file=None,
-        case_yaml_file=None, file_mode=None):
+def run(conf_file, case_file=None):
     '''
     @param conf_file: config.yaml
-    @param case_excel_file: excel case file
-    @param depend_yaml_file: depends yaml file used if file_mode=yaml
-    @param case_yaml_file: case yaml file, used if file_mode=yaml
-    @param file_mode: "excel" or "yaml"
+    @param case_file: case yaml file
     access function
     '''
     # parse config.yaml
@@ -646,15 +530,9 @@ def run(conf_file, case_excel_file=None, depend_yaml_file=None,
     depends_id = {}
 
     # read the test case sheet and perform test
-    if file_mode == "excel":
-        run_test_case_excel(config_file,
-                            case_excel_file, depends_id, http_handler)
-    elif file_mode == "yaml":
-        run_test_case_yaml(config_file,
-                           case_yaml_file, depends_id, http_handler, bmc_ip)
-    else:
-        LOGGER.error("%s,%s", ERROR_CODE['E200001'], file_mode)
-        return None
+    run_test_case_yaml(config_file,
+                           case_file, depends_id, http_handler, bmc_ip)
+
 
     LOGGER.info("done,checking the log %s", LOG_FILE)
 

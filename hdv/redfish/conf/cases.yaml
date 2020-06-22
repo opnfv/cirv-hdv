@@ -1,186 +1,281 @@
 ---
 - case_name: get asset code
   case_sn: 1
+  enabled: true
   expected_code: 200
-  expected_result: '{"AssetTag": "CM_cc@1234"}'
+  expected_result:
+    AssetTag: CM_cc@1234
   group: asset managment
   header: null
   method: GET
   request_body: null
   url: /redfish/v1/Systems/{system_id}
-  key_flag_dict: {"system_id": "Members"}
+  key_flag_dict:
+    system_id: Members
+
 - case_name: check main board name
   case_sn: 8
+  enabled: true
   expected_code: 200
-  expected_result: '{"Oem":{"Mainboard": {"BoardName": "RS33M2C9S"}}}'
+  expected_result:
+    Oem:
+      Mainboard:
+        BoardName: RS33M2C9S
   group: asset managment
   header: null
   method: GET
   request_body: null
   url: /redfish/v1/Chassis/{chassis_id}
-  key_flag_dict: {"chassis_id": "Members"}
+  key_flag_dict:
+    chassis_id: Members
+
 - case_name: check CPU amount
   case_sn: 11
+  enabled: true
   expected_code: 200
-  expected_result: '{"Members@odata.count": 2}'
+  expected_result:
+    Members@odata.count: 2
   group: compoment management
   header: null
   method: GET
   request_body: null
   url: /redfish/v1/Systems/{system_id}/Processors
-  key_flag_dict: {"system_id": "Members"}
+  key_flag_dict:
+    system_id: Members
+
 - case_name: check CPU info
   case_sn: 2
+  enabled: true
   expected_code: 200
-  expected_result: '{    "count": 2,    "Manufacturer": "Intel(R) Corporation",    "MaxSpeedMHz":
-    2300,    "Model": "Intel(R) Xeon(R) Gold 5218N CPU @ 2.30GHz",    "ProcessorArchitecture":
-    ["x86", "IA-64", "ARM", "MIPS", "OEM"],    "Socket": [1, 2],    "Status": {        "Health":
-    "OK",        "State": "Enabled"    },    "TotalCores": 16,    "TotalThreads":
-    32}'
+  expected_result:
+    count: 2
+    Manufacturer: Intel(R) Corporation
+    MaxSpeedMHz: 2300
+    Model: "Intel(R) Xeon(R) Gold 5218N CPU @ 2.30GHz"
+    ProcessorArchitecture: ["x86", "IA-64", "ARM", "MIPS", "OEM"]
+    Socket: [1, 2]
+    Status:
+      Health : OK
+      State: Enabled
+    TotalCores: 16
+    TotalThreads: 32
   group: compoment management
   header: null
   method: GET
   request_body: null
   url: /redfish/v1/Systems/{system_id}/Processors/{cpu_id}
-  key_flag_dict: {"system_id": "Members", "cpu_id": "Members"}
+  key_flag_dict: 
+    system_id: Members
+    cpu_id: Members
+
 - case_name: set asset code
   case_sn: 1
+  enabled: true
   expected_code: 200
-  expected_result: '{"AssetTag": "CM_cc@1234"}'
+  expected_result:
+    AssetTag: CM_cc@1234
   group: asset managment
   header: null
   method: PATCH
   request_body: '{"AssetTag": "CM_cc@1234"}'
   url: /redfish/v1/Systems/{system_id}
-  key_flag_dict: {"system_id": "Members"}
+  key_flag_dict:
+    system_id: Members
+
 - case_name: set host name
   case_sn: 3
+  enabled: true
   expected_code: 200
-  expected_result: '{"HostName": "NFV-RPZJHZ-01B"}'
+  expected_result: 
+    HostName: NFV-RPZJHZ-01B
   group: asset managment
   header: null
   method: PATCH
   request_body: '{"HostName": "NFV-RPZJHZ-01B"}'
   url: /redfish/v1/Systems/{system_id}
-  key_flag_dict: {"system_id": "Members"}
+  key_flag_dict: 
+    system_id: Members
+
 - case_name: check host name
   case_sn: 4
+  enabled: true
   expected_code: 200
-  expected_result: '{"HostName": "NFV-RPZJHZ-01B"}'
+  expected_result:
+    HostName: NFV-RPZJHZ-01B
   group: asset managment
   header: null
   method: GET
   request_body: null
   url: /redfish/v1/Systems/{system_id}
-  key_flag_dict: {"system_id": "Members"}
+  key_flag_dict:
+    system_id: Members
+
 - case_name: check manufacturer
   case_sn: 5
+  enabled: true
   expected_code: 200
-  expected_result: '{"Manufacturer": "New H3C Technologies Co., Ltd."}'
+  expected_result:
+    Manufacturer: New H3C Technologies Co., Ltd.
   group: asset managment
   header: null
   method: GET
   request_body: null
   url: /redfish/v1/Systems/{system_id}
-  key_flag_dict: {"system_id": "Members"}
+  key_flag_dict: 
+    system_id: Members
+
 - case_name: check model
   case_sn: 6
+  enabled: true
   expected_code: 200
-  expected_result: '{"Model": "UniServer R4900 G3"}'
+  expected_result:
+    Model: UniServer R4900 G3
   group: asset managment
   header: null
   method: GET
   request_body: null
   url: /redfish/v1/Systems/{system_id}
-  key_flag_dict: {"system_id": "Members"}
+  key_flag_dict:
+    system_id: Members
+
 - case_name: check serial number
   case_sn: 7
+  enabled: true
   expected_code: 200
-  expected_result: '{"SerialNumber": "N/A"}'
+  expected_result:
+    SerialNumber: N/A
   group: asset managment
   header: null
   method: GET
   request_body: null
   url: /redfish/v1/Systems/{system_id}
-  key_flag_dict: {"system_id": "Members"}
+  key_flag_dict:
+    system_id: Members
+
 - case_name: check main board name
   case_sn: 8
+  enabled: true
   expected_code: 200
-  expected_result: '{"Oem":{"Mainboard": {"BoardName": "RS33M2C9S"}}}'
+  expected_result:
+    Oem:
+      Mainboard:
+        BoardName: RS33M2C9S
   group: asset managment
   header: null
   method: GET
   request_body: null
   url: /redfish/v1/Chassis/{chassis_id}
-  key_flag_dict: {"chassis_id": "Members"}
+  key_flag_dict:
+    chassis_id: Members
+
 - case_name: check main board serial number
   case_sn: 9
+  enabled: true
   expected_code: 200
-  expected_result: '{"Oem": {"Mainboard": {"SerialNumber": "N/A"}}}'
+  expected_result:
+    Oem:
+      Mainboard:
+        SerialNumber: N/A
   group: asset managment
   header: null
   method: GET
   request_body: null
   url: /redfish/v1/Chassis/{chassis_id}
-  key_flag_dict: {"chassis_id": "Members"}
+  key_flag_dict: 
+    chassis_id: Members
+
 - case_name: check BIOS version
   case_sn: 10
+  enabled: true
   expected_code: 200
-  expected_result: '{"BiosVersion": "2.00.35P01 V100R001B02D035SP01"}'
+  expected_result:
+    BiosVersion: 2.00.35P01 V100R001B02D035SP01
   group: asset managment
   header: null
   method: GET
   request_body: null
   url: /redfish/v1/Systems/{system_id}
-  key_flag_dict: {"system_id": "Members"}
+  key_flag_dict:
+    system_id: Members
+
 - case_name: check CPU amount
   case_sn: 11
+  enabled: true
   expected_code: 200
-  expected_result: '{"Members@odata.count": 2}'
+  expected_result:
+    Members@odata.count: 2
   group: compoment management
   header: null
   method: GET
   request_body: null
   url: /redfish/v1/Systems/{system_id}/Processors
-  key_flag_dict: {"system_id": "Members"}
+  key_flag_dict: 
+    system_id: Member
+
 - case_name: check CPU info
   case_sn: 12
+  enabled: true
   expected_code: 200
-  expected_result: '{    "count": 2,    "Manufacturer": "Intel(R) Corporation",    "MaxSpeedMHz":
-    2300,    "Model": "Intel(R) Xeon(R) Gold 5218N CPU @ 2.30GHz",    "ProcessorArchitecture":
-    ["x86", "IA-64", "ARM", "MIPS", "OEM"],    "Socket": [1, 2],    "Status": {        "Health":
-    "OK",        "State": "Enabled"    },    "TotalCores": 16,    "TotalThreads":
-    32}'
+  expected_result:
+    count: 2
+    Manufacturer: Intel(R) Corporation
+    MaxSpeedMHz: 2300
+    Model: "Intel(R) Xeon(R) Gold 5218N CPU @ 2.30GHz"
+    ProcessorArchitecture: ["x86", "IA-64", "ARM", "MIPS", "OEM"]
+    Socket: [1, 2]
+    Status:
+      Health: OK
+      State: Enabled
+    TotalCores: 16
+    TotalThreads: 32
   group: compoment management
   header: null
   method: GET
   request_body: null
   url: /redfish/v1/Systems/{system_id}/Processors/{cpu_id}
-  key_flag_dict: {"system_id": "Members","cpu_id": "Members"}
+  key_flag_dict:
+    system_id: Members
+    cpu_id: Members
+
 - case_name: check memory mount
   case_sn: 13
+  enabled: true
   expected_code: 200
-  expected_result: '{"Members@odata.count": 12}'
+  expected_result:
+    Members@odata.count: 12
   group: compoment management
   header: null
   method: GET
   request_body: null
   url: /redfish/v1/Systems/{system_id}/Memory
-  key_flag_dict: {"system_id": "Members"}
+  key_flag_dict:
+    system_id: Members
+
 - case_name: check memory information
   case_sn: 14
+  enabled: true
   expected_code: 200
-  expected_result: '{    "count": 12,    "BaseModuleType": "RDIMM",    "CapacityMiB":
-    32768,    "DeviceLocator": "N/A",    "Manufacturer": ["Hynix Semiconductor", "Micron"],    "MemoryDeviceType":
-    "DDR4",    "OperatingSpeedMhz": 2666,    "PartNumber": ["HMA84GR7AFR4N-VK","36ASF4G72PZ-2G6D1"],    "Status":
-    {        "Health": "OK",        "State": "Enabled"    }}'
+  expected_result:
+    count: 12
+    BaseModuleType: RDIMM
+    CapacityMiB: 32768
+    DeviceLocator: N/A
+    Manufacturer: ["Hynix Semiconductor", "Micron"]
+    MemoryDeviceType: DDR4
+    OperatingSpeedMhz: 2666
+    PartNumber: ["HMA84GR7AFR4N-VK","36ASF4G72PZ-2G6D1"]
+    Status:
+      Health: OK
+      State: Enabled
   group: compoment management
   header: null
   method: GET
   request_body: null
   url: /redfish/v1/Systems/{system_id}/Memory/{memory_id}
-  key_flag_dict: {"system_id" : "Members", "memory_id" : "Members"}
- 
+  key_flag_dict:
+    System_id : Members
+    memory_id : Members
+
 # - case_name: check raid card amount
 #   case_sn: 15
 #   expected_code: 200
@@ -236,42 +331,78 @@
 #   method: GET
 #   request_body: null
 #   url: https://{bmc_ip}{networkports_id}
-# - case_name: check fans information
-#   case_sn: 20
-#   expected_code: 200
-#   expected_result: '{    "FanSummary": {        "Count": 6    },    "Fans": [        {            "MemberId":
-#     "N/A",            "Oem": {                "Public": {                    "SpeedRatio":
-#     "N/A"                }            },            "Status": {                "Health":
-#     "OK",                "State": "Enabled"            }        },        {            "MemberId":
-#     "N/A",            "Oem": {                "Public": {                    "SpeedRatio":
-#     "N/A"                }            },            "Status": {                "Health":
-#     "OK",                "State": "Enabled"            }        },{            "MemberId":
-#     "N/A",            "Oem": {                "Public": {                    "SpeedRatio":
-#     "N/A"                }            },            "Status": {                "Health":
-#     "OK",                "State": "Enabled"            }        },{            "MemberId":
-#     "N/A",            "Oem": {                "Public": {                    "SpeedRatio":
-#     "N/A"                }            },            "Status": {                "Health":
-#     "OK",                "State": "Enabled"            }        },{            "MemberId":
-#     "N/A",            "Oem": {                "Public": {                    "SpeedRatio":
-#     "N/A"                }            },            "Status": {                "Health":
-#     "OK",                "State": "Enabled"            }        },{            "MemberId":
-#     "N/A",            "Oem": {                "Public": {                    "SpeedRatio":
-#     "N/A"                }            },            "Status": {                "Health":
-#     "OK",                "State": "Enabled"            }        }    ],}'
-#   group: compoment management
-#   header: null
-#   method: GET
-#   request_body: null
-#   url: https://{bmc_ip}/redfish/v1/Chassis/{chassis_id}/Thermal
-# - case_name: check power amount
-#   case_sn: 21
-#   expected_code: 200
-#   expected_result: '{ "DeviceMaxNum": {    "PowerSupplyNum": 2},}'
-#   group: compoment management
-#   header: null
-#   method: GET
-#   request_body: null
-#   url: https://{bmc_ip}/redfish/v1/Chassis/{chassis_id}
+- case_name: check fans information
+  case_sn: 20
+  enabled: true
+  expected_code: 200
+  expected_result:
+    FanSummary:
+      Count: 6
+      Fans:
+      - MemberId: N/A
+        Oem:
+          Public:
+            SpeedRatio: N/A
+        Status:
+          Health: OK
+          State: Enabled
+      - MemberId: N/A
+        Oem:
+          Public:
+          SpeedRatio: N/A
+        Status:
+          Health: OK
+          State: Enable
+      - MemberId: N/A
+        Oem: 
+          Public:
+            SpeedRatio: N/A
+        Status:
+          Health: OK
+        State: Enabled
+      - MemberId: N/A
+        Oem:
+          Public:
+            SpeedRatio: N/A
+        Status:
+          Health: OK
+          State: Enabled
+      - MemberId: N/A
+        Oem:
+          Public:
+            SpeedRatio: N/A
+            Status:
+              Health: OK
+              State: Enabled
+      - MemberId: N/A
+        Oem:
+          Public:
+            SpeedRatio: N/A
+            Status: 
+              Health: OK
+              State: Enabled
+  group: compoment management
+  header: null
+  method: GET
+  request_body: null
+  url: /redfish/v1/Chassis/{chassis_id}/Thermal
+  key_flag_dict: 
+    chassis_id: Members
+
+- case_name: check power amount
+  case_sn: 21
+  enabled: true
+  expected_code: 200
+  expected_result:
+    DeviceMaxNum:
+      PowerSupplyNum: 2
+  group: compoment management
+  header: null
+  method: GET
+  request_body: null
+  url: /redfish/v1/Chassis/{chassis_id}
+  key_flag_dict:
+    chassis_id: MemberId
 # - case_name: check power detail info
 #   case_sn: 22
 #   expected_code: 200
@@ -306,19 +437,27 @@
 #   method: GET
 #   request_body: null
 #   url: https://{bmc_ip}/redfish/v1/Chassis/{chassis_id}/Thermal
-# - case_name: check cpu temperature
-#   case_sn: 25
-#   expected_code: 200
-#   expected_result: '{    "Temperatures": [        {            "Name": "INPUT_TEMP",            "ReadingCelsius":
-#     "N/A",        },        {            "Name": "CPU1_TEMP",            "ReadingCelsius":
-#     "N/A",        },        {            "Name": "CPU2_TEMP",            "ReadingCelsius":
-#     "N/A",        },        ]}'
-#   group: sensor management
-#   header: null
-#   method: GET
-#   request_body: null
-#   url: https://{bmc_ip}/redfish/v1/Chassis/{chassis_id}/Thermal
-# - case_name: check server power state
+- case_name: check cpu temperature
+  case_sn: 25
+  enabled: true
+  expected_code: 200
+  expected_result: 
+    Temperatures: 
+    - Name: INPUT_TEMP
+      ReadingCelsius : N/A
+    - Name: CPU1_TEMP           
+      ReadingCelsius: N/A
+    - Name: CPU2_TEMP         
+      ReadingCelsius: N/A
+  group: sensor management
+  header: null
+  method: GET
+  request_body: null
+  url: /redfish/v1/Chassis/{chassis_id}/Thermal
+  key_flag_dict:
+    chassis_id: Member 
+
+#- case_name: check server power state
 #   case_sn: 26
 #   expected_code: 200
 #   expected_result: '{"PowerState": "On"}'
