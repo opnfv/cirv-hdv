@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "51d5d512_cd46dbb0",
+        "filename": "hdv/redfish/conf/cases.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2020-06-28T06:28:00Z",
+      "side": 1,
+      "message": "quates the value by \", same for the hereafter",
+      "revId": "460b70f504d2a591a1db9c144db6017e6d251a30",
+      "serverId": "bbac25d2-bf60-4904-9ba8-a72fc000d6c5",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3be10865_fd6a3033",
+        "filename": "hdv/redfish/conf/cases.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2020-06-28T06:28:00Z",
+      "side": 1,
+      "message": "typo, but let\u0027s verify in real hardware to finalize it per type.",
+      "revId": "460b70f504d2a591a1db9c144db6017e6d251a30",
+      "serverId": "bbac25d2-bf60-4904-9ba8-a72fc000d6c5",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "be6ce7fa_83146838",
+        "filename": "hdv/redfish/hdv_redfish.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 454,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2020-06-28T06:28:00Z",
+      "side": 1,
+      "message": "logging a debug level to log files for disabled case.",
+      "revId": "460b70f504d2a591a1db9c144db6017e6d251a30",
+      "serverId": "bbac25d2-bf60-4904-9ba8-a72fc000d6c5",
+      "unresolved": true
+    }
+  ]
+}
