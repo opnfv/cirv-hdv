@@ -1,0 +1,69 @@
+---
+- case_name: get asset code
+  case_sn: 1
+  enabled: false
+  expected_code: 200
+  expected_result:
+    AssetTag: CM_cc@1234
+  group: asset managment
+  header: null
+  method: GET
+  request_body: null
+  url: /redfish/v1/Systems/{system_id}
+  key_flag_dict:
+    system_id: Members
+
+- case_name: check main board name
+  case_sn: 8
+  enabled: true
+  expected_code: 200
+  expected_result:
+    Oem:
+      Mainboard:
+        BoardName: RS33M2C9S
+  group: asset managment
+  header: null
+  method: GET
+  request_body: null
+  url: /redfish/v1/Chassis/{chassis_id}
+  key_flag_dict:
+    chassis_id: Members
+
+- case_name: check CPU amount
+  case_sn: 11
+  enabled: true
+  expected_code: 200
+  expected_result:
+    Members@odata.count: 2
+  group: compoment management
+  header: null
+  method: GET
+  request_body: null
+  url: /redfish/v1/Systems/{system_id}/Processors
+  key_flag_dict:
+    system_id: Members
+
+- case_name: check CPU info
+  case_sn: 2
+  enabled: true
+  expected_code: 200
+  expected_result:
+    count: 2
+    Manufacturer: "Intel(R) Corporation"
+    MaxSpeedMHz: 2300
+    Model: "Intel(R) Xeon(R) Gold 5218N CPU @ 2.30GHz"
+    ProcessorArchitecture: ["x86", "IA-64", "ARM", "MIPS", "OEM"]
+    Socket: [1, 2]
+    Status:
+      Health: OK
+      State: Enabled
+    TotalCores: 16
+    TotalThreads: 32
+  group: compoment management
+  header: null
+  method: GET
+  request_body: null
+  url: /redfish/v1/Systems/{system_id}/Processors/{cpu_id}
+  key_flag_dict:
+    system_id: Members
+    cpu_id: Members
