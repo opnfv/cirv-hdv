@@ -34,7 +34,7 @@
   enabled: true
   expected_code: 200
   expected_result:
-    Members@odata.count: 2
+    Members@odata.count: 3
   group: compoment management
   header: null
   method: GET
@@ -51,14 +51,7 @@
     count: 2
     Manufacturer: "Intel(R) Corporation"
     MaxSpeedMHz: 2300
-    Model: "Intel(R) Xeon(R) Gold 5218N CPU @ 2.30GHz"
     ProcessorArchitecture: ["x86", "IA-64", "ARM", "MIPS", "OEM"]
-    Socket: [1, 2]
-    Status:
-      Health: OK
-      State: Enabled
-    TotalCores: 16
-    TotalThreads: 32
   group: compoment management
   header: null
   method: GET
