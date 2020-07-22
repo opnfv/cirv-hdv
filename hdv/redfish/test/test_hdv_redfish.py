@@ -36,7 +36,7 @@ def test_create_real_url(sampleCase, expected_list):
     bmc_ip = ""
     depends_id = {}
     http_handler = UrllibHttpHandler()
-    url_list = create_real_url(url, depends_id, None, key_flag_dict, http_handler, bmc_ip)
+    url_list = create_real_url(url, depends_id, key_flag_dict, http_handler, bmc_ip)
 
     assert expected_list == url_list
 
@@ -49,7 +49,7 @@ def test_execute_final_url(sampleCase):
     depends_id = {}
     http_handler = UrllibHttpHandler()
     config_file = {}
-    rsp_list = execute_final_url(config_file, depends_id,
+    rsp_list = execute_final_url(depends_id,
                                  http_handler, method, url, req_body, key_flag_dict, bmc_ip)
     assert mock_server[url] == rsp_list
 
@@ -71,7 +71,7 @@ def test_parse_result(sampleCase, expected_return_value_list):
     depends_id = {}
     http_handler = UrllibHttpHandler()
     config_file = {}
-    rsp_list = execute_final_url(config_file, depends_id,
+    rsp_list = execute_final_url(depends_id,
                                  http_handler, method, url, req_body, key_flag_dict, bmc_ip)
 
     return_value_list, return_code_list, final_rst, flag = \
@@ -98,7 +98,7 @@ def test_parse_data(sampleCase, expected_act_pairs_list):
     depends_id = {}
     http_handler = UrllibHttpHandler()
     config_file = {}
-    rsp_list = execute_final_url(config_file, depends_id,
+    rsp_list = execute_final_url(depends_id,
                                  http_handler, method, url, req_body, key_flag_dict, bmc_ip)
 
     for i in range (0,len(rsp_list)):

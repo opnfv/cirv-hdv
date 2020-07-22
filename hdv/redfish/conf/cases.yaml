@@ -1,6 +1,6 @@
 ---
 - case_name: get asset code
-  case_sn: 1
+  case_sn: 0
   enabled: false
   expected_code: 200
   expected_result:

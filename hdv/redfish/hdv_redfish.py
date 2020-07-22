@@ -12,6 +12,7 @@ an implementation of hardware delivery validation based on redfish interface.
 import time
 import os
 import re
+import pytest
 from re import DOTALL as DT
 import json
 import copy
@@ -22,11 +23,13 @@ from http_handler import UrllibHttpHandler, HEADERS
 # pylint: disable=E0611
 from log_utils import BASE_DIR, LOG_FILE, LOGGER
 from errors import ERROR_CODE, WARN_CODE
+from test_api import PushResults
 
 LOGGER.info(BASE_DIR)
 
 ACCOUNT_INFO = {}
 WAIT_INTERVAL = 5
+cases_result = []
 
 
 def parse_config(config_yaml):
@@ -144,7 +147,6 @@ def compare_data(value, flag):
             flag += 1
             return "Failure, expect value: " + str(value[0]) + \
                 ", return value: " + str(value[1]), flag
-
     elif isinstance(value, list):
         for elem in enumerate(value, start=0):
             index = elem[0]
@@ -167,7 +169,8 @@ def get_component_ids_yaml(file):
         return None
     return yaml.load(open(file, "r"))
 
-def create_real_url(url_value, id_dict, config_file, key_flag_dict, http_handler, bmc_ip):
+
+def create_real_url(url_value, id_dict, key_flag_dict, http_handler, bmc_ip):
     '''
     create the real url
     either a static url, or a replaced url by depended_id
@@ -182,8 +185,8 @@ def create_real_url(url_value, id_dict, config_file, key_flag_dict, http_handler
 
     for match in matches:
         value = match.groupdict()
-        #stripping out value['var'] from end of the URL
-        parent_url = match.group().rstrip('{' +value['var']+ '}')
+        # stripping out value['var'] from end of the URL
+        parent_url = match.group().rstrip('{' + value['var'] + '}')
 
         if value['var'] in id_dict:
             replaced = 1
@@ -197,9 +200,11 @@ def create_real_url(url_value, id_dict, config_file, key_flag_dict, http_handler
                 for index in range(len(url_list)):
                     url_list[index] = url_list[index] + parent_url
 
-            response_list = handle_depend_url("GET", url_list, http_handler, bmc_ip)
-            
-            url_list = create_obj_id_list(key_flag_dict[value['var']], response_list)
+            response_list = handle_depend_url(
+                "GET", url_list, http_handler, bmc_ip)
+
+            url_list = create_obj_id_list(
+                key_flag_dict[value['var']], response_list)
 
             if url_list is None or url_list.__len__() == 0:
                 LOGGER.error("%s,%s", ERROR_CODE['E300003'], value['var'])
@@ -209,10 +214,10 @@ def create_real_url(url_value, id_dict, config_file, key_flag_dict, http_handler
         else:
             replaced = 3
             LOGGER.error("%s for parameter %s",
-                    ERROR_CODE['E300002'], value['var'])
-        
+                         ERROR_CODE['E300002'], value['var'])
+
         LOGGER.debug('url_list content is %s', url_list)
-    
+
     # combine single case with list case together.
     if replaced == 0:
         LOGGER.info("adding static url %s into list", url_value)
@@ -220,7 +225,7 @@ def create_real_url(url_value, id_dict, config_file, key_flag_dict, http_handler
 
     for index in range(len(url_list)):
         url_list[index] = url_list[index] + url_value.split('}')[-1]
-    
+
     LOGGER.debug("created real url list is %s", url_list)
     return url_list
 
@@ -297,6 +302,7 @@ def create_obj_id_list(key_flags, response_list):
         else:
             LOGGER.error("%s %s", ERROR_CODE['E400003'], key_flags)
     return end_id_list
+
 
 def execute_post_url(body, handler, url):
     '''
@@ -425,7 +431,6 @@ def parse_test_result(expect_return_value, expect_return_code,
                 exp_act_pairs[key] = \
                     (value, "Can't find key {} in return value".format(key))
         LOGGER.debug("real_result:%s", exp_act_pairs)
-
         # comparing expected result with real result.
         if exp_act_pairs:
             for key, value in exp_act_pairs.items():
@@ -434,63 +439,64 @@ def parse_test_result(expect_return_value, expect_return_code,
     return return_value_list, return_code_list, final_result, flag
 
 
-def execute_final_url(config_file, depends_id, http_handler,
-                      method, url, req_body, key_flag_dict, bmc_ip):
+def execute_final_url(depends_id, http_handler, method,
+                      url, req_body, key_flag_dict, bmc_ip):
     '''
     execute final url to get the request result
     '''
-    url_list = create_real_url(url, depends_id, config_file, key_flag_dict, http_handler, bmc_ip)
-    rsp_list = handle_final_url(bmc_ip, method, url_list, req_body, http_handler)
+    url_list = create_real_url(
+        url, depends_id, key_flag_dict, http_handler, bmc_ip)
+    rsp_list = handle_final_url(
+        bmc_ip, method, url_list, req_body, http_handler)
     return rsp_list
 
 
-def run_test_case_yaml(config_file, case_file, depends_id, http_handler, bmc_ip):
-    '''run test case from cases.yaml
-    '''
-    LOGGER.info("############### start perform test case #################")
-    cases_result = []
-    cases = read_yaml(case_file)
-    for case in cases:
-        if(case['enabled'] is False):
-            LOGGER.debug("skipping case: %s", case["case_name"])
-            continue
-
-        LOGGER.debug("running case: %s", case["case_name"])
-        method, url, req_body, expected_code, expected_value, tc_name, key_flag_dict \
-            = case['method'], case['url'], case['request_body'], \
-            case['expected_code'], case['expected_result'], case['case_name'], case['key_flag_dict']
-        
-        flag = 0
-        final_rst = {}
-        rsp_list = execute_final_url(config_file, depends_id,
-                                     http_handler, method, url, req_body, key_flag_dict, bmc_ip)
-        if rsp_list is not None and len(rsp_list) > 0:
-            return_value_list, return_code_list, final_rst, flag = \
-                parse_test_result(
-                    expected_value, expected_code, rsp_list, final_rst)
-            final_rst.update({'info': return_value_list})
-            LOGGER.debug("return_code_list:%s", return_code_list)
-            case['return_code_seq'] = str(return_code_list)
-        else:
-            LOGGER.error("%s", ERROR_CODE['E600001'])
-            flag += 1
-        case['final_rst'] = "Success" if flag == 0 else "Failure"
-        case['details_result'] = \
-            str(final_rst) if len(final_rst) > 0 else "N/A"
-        cases_result.append(case)
-        LOGGER.info("writing test final_rst for case %s", tc_name)
-    write_result_2_yaml(cases_result)
-
-    LOGGER.info("############### end perform test case ###################")
-
-
 def read_yaml(file):
-    '''read a yaml file
+    '''
+    read a yaml file
     '''
     if not os.path.exists(file):
         LOGGER.info("%s %s", ERROR_CODE['E400001'], file)
         return None
     return yaml.load(open(file, "r"))
+
+
+def test_case_yaml_run(run, case):
+    '''
+    run test case from cases.yaml
+    '''
+    depends_id, http_handler, bmc_ip = run
+    if(case['enabled'] is False):
+        cases_result.append(case)
+        LOGGER.debug("skipping case: %s", case["case_name"])
+        pytest.skip()
+
+    LOGGER.debug("running case: %s", case["case_name"])
+    method, url, req_body, expected_code, expected_value, tc_name, key_flag_dict \
+        = case['method'], case['url'], case['request_body'], \
+        case['expected_code'], case['expected_result'], case['case_name'], case['key_flag_dict']
+
+    flag = 0
+    final_rst = {}
+    rsp_list = execute_final_url(
+        depends_id, http_handler, method, url, req_body, key_flag_dict, bmc_ip)
+    if rsp_list is not None and len(rsp_list) > 0:
+        return_value_list, return_code_list, final_rst, flag = \
+            parse_test_result(
+                expected_value, expected_code, rsp_list, final_rst)
+        final_rst.update({'info': return_value_list})
+        LOGGER.debug("final_rst:%s", final_rst)
+        LOGGER.debug("return_code_list:%s", return_code_list)
+        case['return_code_seq'] = str(return_code_list)
+    else:
+        LOGGER.error("%s", ERROR_CODE['E600001'])
+        flag += 1
+    case['final_rst'] = "Success" if flag == 0 else "Failure"
+    case['details_result'] = \
+        str(final_rst) if len(final_rst) > 0 else "N/A"
+    cases_result.append(case)
+    LOGGER.info("writing test final_rst for case %s", tc_name)
+    assert flag == 0, final_rst
 
 
 def write_result_2_yaml(result):
@@ -502,7 +508,22 @@ def write_result_2_yaml(result):
                    explicit_start=True)
 
 
-def run(conf_file, case_file=None):
+def generate_testapi_result(cases_result):
+    '''
+    convert cases_result from list to dictionary for pushing to testapi
+    '''
+    testapi_result = {}
+
+    for case_result in cases_result:
+        testapi_result[case_result['case_sn']] = case_result
+        print(case_result)
+    LOGGER.info("generated result for testapi %s", testapi_result)
+
+    return testapi_result
+
+
+@pytest.fixture(scope='session')
+def run(conf_file):
     '''
     @param conf_file: config.yaml
     @param case_file: case yaml file
@@ -531,12 +552,14 @@ def run(conf_file, case_file=None):
     id_info_list = None
 
     depends_id = {}
+    LOGGER.info("############### start perform test case #################")
 
-    # read the test case sheet and perform test
-    run_test_case_yaml(config_file,
-                           case_file, depends_id, http_handler, bmc_ip)
+    yield depends_id, http_handler, bmc_ip
 
-
+    write_result_2_yaml(cases_result)
+    LOGGER.info("############### end perform test case ###################")
     LOGGER.info("done,checking the log %s", LOG_FILE)
-
+    # parse cases_result for testapi and push it
+    testapi_result = generate_testapi_result(cases_result)
+    PushResults(testapi_result, LOGGER)
     return True
