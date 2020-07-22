@@ -12,6 +12,7 @@ an implementation of hardware delivery validation based on redfish interface.
 import time
 import os
 import re
+import pytest
 from re import DOTALL as DT
 import json
 import copy
@@ -27,7 +28,7 @@ LOGGER.info(BASE_DIR)
 
 ACCOUNT_INFO = {}
 WAIT_INTERVAL = 5
-
+cases_result = []
 
 def parse_config(config_yaml):
     """
@@ -126,26 +127,13 @@ def compare_data(value, flag):
     if isinstance(value, tuple):
         if value[1] is not None or value[1]:
             if value[0] == 'N/A':
-                return "Success", flag
+                assert value[0] == 'N/A'
             elif isinstance(value[0], (bool, int, str)):
-                if value[0] == value[1]:
-                    return "Success", flag
-                else:
-                    flag += 1
-                    return "Failure, expect value: " + str(value[0]) + \
-                        ", return value: " + str(value[1]), flag
-            elif value[1] in value[0] or value[0] == ['N/A']:
-                return "Success", flag
+                assert value[0] == value[1]
             else:
-                flag += 1
-                return "Failure, expect value: " + str(value[0]) + \
-                    ", return value: " + str(value[1]), flag
-        else:
-            flag += 1
-            return "Failure, expect value: " + str(value[0]) + \
-                ", return value: " + str(value[1]), flag
+                assert value[1] in value[0] or value[0] in ['N/A']
 
-    elif isinstance(value, list):
+    if isinstance(value, list):
         for elem in enumerate(value, start=0):
             index = elem[0]
             value[index], flag = compare_data(value[index], flag)
@@ -167,7 +155,7 @@ def get_component_ids_yaml(file):
         return None
     return yaml.load(open(file, "r"))
 
-def create_real_url(url_value, id_dict, config_file, key_flag_dict, http_handler, bmc_ip):
+def create_real_url(url_value, id_dict, key_flag_dict, http_handler, bmc_ip):
     '''
     create the real url
     either a static url, or a replaced url by depended_id
@@ -434,55 +422,14 @@ def parse_test_result(expect_return_value, expect_return_code,
     return return_value_list, return_code_list, final_result, flag
 
 
-def execute_final_url(config_file, depends_id, http_handler,
-                      method, url, req_body, key_flag_dict, bmc_ip):
+def execute_final_url(depends_id, http_handler, method,
+                         url, req_body, key_flag_dict, bmc_ip):
     '''
     execute final url to get the request result
     '''
-    url_list = create_real_url(url, depends_id, config_file, key_flag_dict, http_handler, bmc_ip)
+    url_list = create_real_url(url, depends_id, key_flag_dict, http_handler, bmc_ip)
     rsp_list = handle_final_url(bmc_ip, method, url_list, req_body, http_handler)
     return rsp_list
-
-
-def run_test_case_yaml(config_file, case_file, depends_id, http_handler, bmc_ip):
-    '''run test case from cases.yaml
-    '''
-    LOGGER.info("############### start perform test case #################")
-    cases_result = []
-    cases = read_yaml(case_file)
-    for case in cases:
-        if(case['enabled'] is False):
-            LOGGER.debug("skipping case: %s", case["case_name"])
-            continue
-
-        LOGGER.debug("running case: %s", case["case_name"])
-        method, url, req_body, expected_code, expected_value, tc_name, key_flag_dict \
-            = case['method'], case['url'], case['request_body'], \
-            case['expected_code'], case['expected_result'], case['case_name'], case['key_flag_dict']
-        
-        flag = 0
-        final_rst = {}
-        rsp_list = execute_final_url(config_file, depends_id,
-                                     http_handler, method, url, req_body, key_flag_dict, bmc_ip)
-        if rsp_list is not None and len(rsp_list) > 0:
-            return_value_list, return_code_list, final_rst, flag = \
-                parse_test_result(
-                    expected_value, expected_code, rsp_list, final_rst)
-            final_rst.update({'info': return_value_list})
-            LOGGER.debug("return_code_list:%s", return_code_list)
-            case['return_code_seq'] = str(return_code_list)
-        else:
-            LOGGER.error("%s", ERROR_CODE['E600001'])
-            flag += 1
-        case['final_rst'] = "Success" if flag == 0 else "Failure"
-        case['details_result'] = \
-            str(final_rst) if len(final_rst) > 0 else "N/A"
-        cases_result.append(case)
-        LOGGER.info("writing test final_rst for case %s", tc_name)
-    write_result_2_yaml(cases_result)
-
-    LOGGER.info("############### end perform test case ###################")
-
 
 def read_yaml(file):
     '''read a yaml file
@@ -491,6 +438,39 @@ def read_yaml(file):
         LOGGER.info("%s %s", ERROR_CODE['E400001'], file)
         return None
     return yaml.load(open(file, "r"))
+
+@pytest.mark.parametrize("case", read_yaml("./conf/cases.yaml"))
+def test_case_yaml_run(run, case):
+    '''run test case from cases.yaml
+    '''
+    depends_id, http_handler, bmc_ip = run
+    if(case['enabled'] is False):
+        LOGGER.debug("skipping case: %s", case["case_name"])
+        pytest.skip()
+
+    LOGGER.debug("running case: %s", case["case_name"])
+    method, url, req_body, expected_code, expected_value, tc_name, key_flag_dict \
+        = case['method'], case['url'], case['request_body'], \
+        case['expected_code'], case['expected_result'], case['case_name'], case['key_flag_dict']
+
+    flag = 0
+    final_rst = {}
+    rsp_list = execute_final_url( depends_id, http_handler, method, url, req_body, key_flag_dict, bmc_ip)
+    if rsp_list is not None and len(rsp_list) > 0:
+        return_value_list, return_code_list, final_rst, flag = \
+            parse_test_result(
+                expected_value, expected_code, rsp_list, final_rst)
+        final_rst.update({'info': return_value_list})
+        LOGGER.debug("return_code_list:%s", return_code_list)
+        case['return_code_seq'] = str(return_code_list)
+    else:
+        LOGGER.error("%s", ERROR_CODE['E600001'])
+        flag += 1
+    case['final_rst'] = "Success" if flag == 0 else "Failure"
+    case['details_result'] = \
+        str(final_rst) if len(final_rst) > 0 else "N/A"
+    cases_result.append(case)
+    LOGGER.info("writing test final_rst for case %s", tc_name)
 
 
 def write_result_2_yaml(result):
@@ -501,8 +481,8 @@ def write_result_2_yaml(result):
     yaml.safe_dump(result, open("./conf/report.yaml", "w"),
                    explicit_start=True)
 
-
-def run(conf_file, case_file=None):
+@pytest.fixture(scope = 'session')
+def run(conf_file, case_file):
     '''
     @param conf_file: config.yaml
     @param case_file: case yaml file
@@ -531,12 +511,13 @@ def run(conf_file, case_file=None):
     id_info_list = None
 
     depends_id = {}
-
+    LOGGER.info("############### start perform test case #################")
     # read the test case sheet and perform test
-    run_test_case_yaml(config_file,
-                           case_file, depends_id, http_handler, bmc_ip)
+    yield depends_id, http_handler, bmc_ip
 
+    write_result_2_yaml(cases_result)
 
+    LOGGER.info("############### end perform test case ###################")
     LOGGER.info("done,checking the log %s", LOG_FILE)
 
     return True
