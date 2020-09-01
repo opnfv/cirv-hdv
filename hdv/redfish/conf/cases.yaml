@@ -9,7 +9,7 @@
   header: null
   method: GET
   request_body: null
-  url: /redfish/v1/Systems/{system_id}
+  url: /redfish/v1/Systems/{system_id}/
   key_flag_dict:
     system_id: Members
 
@@ -25,7 +25,7 @@
   header: null
   method: GET
   request_body: null
-  url: /redfish/v1/Chassis/{chassis_id}
+  url: /redfish/v1/Chassis/{chassis_id}/
   key_flag_dict:
     chassis_id: Members
 
@@ -39,7 +39,7 @@
   header: null
   method: GET
   request_body: null
-  url: /redfish/v1/Systems/{system_id}/Processors
+  url: /redfish/v1/Systems/{system_id}/Processors/
   key_flag_dict:
     system_id: Members
 
@@ -63,7 +63,7 @@
   header: null
   method: GET
   request_body: null
-  url: /redfish/v1/Systems/{system_id}/Processors/{cpu_id}
+  url: /redfish/v1/Systems/{system_id}/Processors/{cpu_id}/
   key_flag_dict:
     system_id: Members
     cpu_id: Members
@@ -78,7 +78,7 @@
   header: null
   method: PATCH
   request_body: '{"AssetTag": "CM_cc@1234"}'
-  url: /redfish/v1/Systems/{system_id}
+  url: /redfish/v1/Systems/{system_id}/
   key_flag_dict:
     system_id: Members
 
@@ -92,7 +92,7 @@
   header: null
   method: PATCH
   request_body: '{"HostName": "NFV-RPZJHZ-01B"}'
-  url: /redfish/v1/Systems/{system_id}
+  url: /redfish/v1/Systems/{system_id}/
   key_flag_dict:
     system_id: Members
 
@@ -106,7 +106,7 @@
   header: null
   method: GET
   request_body: null
-  url: /redfish/v1/Systems/{system_id}
+  url: /redfish/v1/Systems/{system_id}/
   key_flag_dict:
     system_id: Members
 
@@ -120,7 +120,7 @@
   header: null
   method: GET
   request_body: null
-  url: /redfish/v1/Systems/{system_id}
+  url: /redfish/v1/Systems/{system_id}/
   key_flag_dict:
     system_id: Members
 
@@ -134,7 +134,7 @@
   header: null
   method: GET
   request_body: null
-  url: /redfish/v1/Systems/{system_id}
+  url: /redfish/v1/Systems/{system_id}/
   key_flag_dict:
     system_id: Members
 
@@ -148,7 +148,7 @@
   header: null
   method: GET
   request_body: null
-  url: /redfish/v1/Systems/{system_id}
+  url: /redfish/v1/Systems/{system_id}/
   key_flag_dict:
     system_id: Members
 
@@ -164,7 +164,7 @@
   header: null
   method: GET
   request_body: null
-  url: /redfish/v1/Chassis/{chassis_id}
+  url: /redfish/v1/Chassis/{chassis_id}/
   key_flag_dict:
     chassis_id: Members
 
@@ -180,7 +180,7 @@
   header: null
   method: GET
   request_body: null
-  url: /redfish/v1/Chassis/{chassis_id}
+  url: /redfish/v1/Chassis/{chassis_id}/
   key_flag_dict:
     chassis_id: Members
 
@@ -194,7 +194,7 @@
   header: null
   method: GET
   request_body: null
-  url: /redfish/v1/Systems/{system_id}
+  url: /redfish/v1/Systems/{system_id}/
   key_flag_dict:
     system_id: Members
 
@@ -208,7 +208,7 @@
   header: null
   method: GET
   request_body: null
-  url: /redfish/v1/Systems/{system_id}/Processors
+  url: /redfish/v1/Systems/{system_id}/Processors/
   key_flag_dict:
     system_id: Member
 
@@ -232,7 +232,7 @@
   header: null
   method: GET
   request_body: null
-  url: /redfish/v1/Systems/{system_id}/Processors/{cpu_id}
+  url: /redfish/v1/Systems/{system_id}/Processors/{cpu_id}/
   key_flag_dict:
     system_id: Members
     cpu_id: Members
@@ -247,7 +247,7 @@
   header: null
   method: GET
   request_body: null
-  url: /redfish/v1/Systems/{system_id}/Memory
+  url: /redfish/v1/Systems/{system_id}/Memory/
   key_flag_dict:
     system_id: Members
 
@@ -271,7 +271,7 @@
   header: null
   method: GET
   request_body: null
-  url: /redfish/v1/Systems/{system_id}/Memory/{memory_id}
+  url: /redfish/v1/Systems/{system_id}/Memory/{memory_id}/
   key_flag_dict:
     System_id: Members
     memory_id: Members
@@ -385,7 +385,7 @@
   header: null
   method: GET
   request_body: null
-  url: /redfish/v1/Chassis/{chassis_id}/Thermal
+  url: /redfish/v1/Chassis/{chassis_id}/Thermal/
   key_flag_dict:
     chassis_id: Members
 
@@ -400,7 +400,7 @@
   header: null
   method: GET
   request_body: null
-  url: /redfish/v1/Chassis/{chassis_id}
+  url: /redfish/v1/Chassis/{chassis_id}/
   key_flag_dict:
     chassis_id: MemberId
 # - case_name: check power detail info
@@ -453,7 +453,7 @@
   header: null
   method: GET
   request_body: null
-  url: /redfish/v1/Chassis/{chassis_id}/Thermal
+  url: /redfish/v1/Chassis/{chassis_id}/Thermal/
   key_flag_dict:
     chassis_id: Member
 
