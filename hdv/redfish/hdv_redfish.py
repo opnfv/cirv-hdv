@@ -112,6 +112,7 @@ def parse_data(exp_value, act_value):
                 if key in act_value:
                     exp_value[key] = parse_data(val, act_value[key])
                 else:
+                    exp_value[key] = (val, "Can't find key {} in return value".format(key))
                     LOGGER.error("%s,%s", ERROR_CODE['E500001'], key)
         else:
             LOGGER.error("%s,expected: %s , actual: %s",
@@ -182,7 +183,6 @@ def create_real_url(url_value, id_dict, key_flag_dict, http_handler, bmc_ip):
     pattern = re.compile(regexp, DT)
     LOGGER.info("url_value %s", url_value)
     matches = list(pattern.finditer(url_value))
-
     for match in matches:
         value = match.groupdict()
         # stripping out value['var'] from end of the URL
@@ -198,6 +198,9 @@ def create_real_url(url_value, id_dict, key_flag_dict, http_handler, bmc_ip):
                 url_list.append(parent_url)
             else:
                 for index in range(len(url_list)):
+                    #Make sure link will not have merged with '//' two forward slashes
+                    if parent_url[0] == '/' and url_list[index][-1] == '/':
+                        parent_url = parent_url[1:]
                     url_list[index] = url_list[index] + parent_url
 
             response_list = handle_depend_url(
@@ -224,7 +227,11 @@ def create_real_url(url_value, id_dict, key_flag_dict, http_handler, bmc_ip):
         url_list.append(url_value)
 
     for index in range(len(url_list)):
-        url_list[index] = url_list[index] + url_value.split('}')[-1]
+        #Make sure link will not have merged with '//' two forward slashes
+        if(url_value.split('}')[-1][0] == '/' and  url_list[index][-1] == '/'):
+            url_list[index] = url_list[index] + url_value.split('}')[-1][1:]
+        else:
+            url_list[index] = url_list[index] + url_value.split('}')[-1]      
 
     LOGGER.debug("created real url list is %s", url_list)
     return url_list
@@ -540,7 +547,7 @@ def run(conf_file):
     ACCOUNT_INFO.update({"UserName": bmc_user})
     ACCOUNT_INFO.update({"Password": bmc_pwd})
 
-    url = "{0}/redfish/v1/SessionService/Sessions".format(bmc_ip)
+    url = "{0}/redfish/v1/SessionService/Sessions/".format(bmc_ip)
     x_auth_token = get_token(http_handler, url)
     LOGGER.info("x_auth_token: %s", x_auth_token)
 
