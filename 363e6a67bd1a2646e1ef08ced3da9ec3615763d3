@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "ec03432d_573d2ada",
+        "filename": "hdv/redfish/hdv_redfish.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2020-09-03T06:36:14Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "6e65f3bd_d1bde520",
+      "revId": "363e6a67bd1a2646e1ef08ced3da9ec3615763d3",
+      "serverId": "bbac25d2-bf60-4904-9ba8-a72fc000d6c5",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e3d21fdd_8694caa7",
         "filename": "hdv/redfish/hpe6_conf/cases.yaml",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2020-09-03T05:55:04Z",
       "side": 1,
       "message": "I tried but unable to find main board information. I don\u0027t know whether it is not provided by the redfish server or have some different name and URI.\nI am following this HPE ILO 4 reference - https://hewlettpackard.github.io/ilo-rest-api-docs/ilo4/.",
+      "revId": "363e6a67bd1a2646e1ef08ced3da9ec3615763d3",
+      "serverId": "bbac25d2-bf60-4904-9ba8-a72fc000d6c5",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "50013767_09758bf7",
+        "filename": "hdv/redfish/hpe6_conf/cases.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2020-09-03T06:36:14Z",
+      "side": 1,
+      "message": "Could you run the /redfish/v1/Chassis/{chassis_id}/ request to check the response text, if there is same thing but with different label name?",
+      "parentUuid": "e3d21fdd_8694caa7",
       "revId": "363e6a67bd1a2646e1ef08ced3da9ec3615763d3",
       "serverId": "bbac25d2-bf60-4904-9ba8-a72fc000d6c5",
       "unresolved": true
