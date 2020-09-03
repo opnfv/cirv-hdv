@@ -69,6 +69,24 @@
       "revId": "363e6a67bd1a2646e1ef08ced3da9ec3615763d3",
       "serverId": "bbac25d2-bf60-4904-9ba8-a72fc000d6c5",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b98c601f_fc94b80d",
+        "filename": "hdv/redfish/hpe6_conf/cases.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 7634
+      },
+      "writtenOn": "2020-09-03T07:22:44Z",
+      "side": 1,
+      "message": "I didn\u0027t find any. Can you please look at the response - https://pastebin.com/2r8YHfMi ?",
+      "parentUuid": "50013767_09758bf7",
+      "revId": "363e6a67bd1a2646e1ef08ced3da9ec3615763d3",
+      "serverId": "bbac25d2-bf60-4904-9ba8-a72fc000d6c5",
+      "unresolved": true
     }
   ]
 }
