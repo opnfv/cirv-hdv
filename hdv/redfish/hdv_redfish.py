@@ -32,22 +32,25 @@ WAIT_INTERVAL = 5
 cases_result = []
 
 
-def parse_config(config_yaml):
+def parse_config(config_json):
     """
     parse setting from config.yaml
     :return:
     """
     try:
-        if not os.path.exists(config_yaml):
-            LOGGER.error(" %s, %s", ERROR_CODE['E400001'], config_yaml)
-        with open(config_yaml, 'r') as conf_file:
-            config = yaml.load(conf_file.read(), Loader=yaml.FullLoader)
+        if not os.path.exists(config_json):
+            LOGGER.error(" %s, %s", ERROR_CODE['E400001'], config_json)
+        with open(config_json, 'r') as conf_file:
+            config = json.load(conf_file)
     except FileNotFoundError as fnfe:
         LOGGER.error(fnfe)
         LOGGER.error(u"%s", ERROR_CODE['E400002'])
         return None
     else:
-        return config
+        config_list = []
+        for each_server in config["servers"]:
+            config_list.append(each_server["ilo_info"])
+        return config_list
 
 
 def get_token(http_handler, url):
@@ -509,14 +512,14 @@ def test_case_yaml_run(run, case):
     assert flag == 0, final_rst
 
 
-def write_result_2_yaml(result):
+def write_result_2_yaml(result, bmc_ip):
     '''
     write test result to new report.yaml
     '''
     LOGGER.info("writing to yaml file")
-    yaml.safe_dump(result, open("./conf/report.yaml", "w"),
+    
+    yaml.safe_dump(result, open("./result/"+bmc_ip+time.ctime()+"_report.yaml", "w"),
                    explicit_start=True)
-
 
 def generate_testapi_result(cases_result):
     '''
@@ -531,9 +534,12 @@ def generate_testapi_result(cases_result):
 
     return testapi_result
 
+@pytest.fixture('session')
+def config_list(request):
+    return request.param
 
 @pytest.fixture(scope='session')
-def run(conf_file):
+def run(config_list):
     '''
     @param conf_file: config.yaml
     @param case_file: case yaml file
@@ -541,16 +547,14 @@ def run(conf_file):
     '''
     # parse config.yaml
     LOGGER.info("start engine ...")
-    config_file = parse_config(conf_file)
     http_handler = UrllibHttpHandler()
-
     # get bmc info
     bmc_ip, bmc_user, bmc_pwd = \
-        config_file["bmc_ip"], config_file["bmc_user"], config_file["bmc_pwd"]
+        "https://" + config_list["ip"], config_list["user"], config_list["password"]
     ACCOUNT_INFO.update({"UserName": bmc_user})
     ACCOUNT_INFO.update({"Password": bmc_pwd})
 
-    url = "{0}/redfish/v1/SessionService/Sessions/".format(bmc_ip)
+    url = "https://{0}/redfish/v1/SessionService/Sessions/".format(bmc_ip)
     x_auth_token = get_token(http_handler, url)
     LOGGER.info("x_auth_token: %s", x_auth_token)
 
@@ -566,10 +570,11 @@ def run(conf_file):
 
     yield depends_id, http_handler, bmc_ip
 
-    write_result_2_yaml(cases_result)
+    write_result_2_yaml(cases_result, config_list["ip"])
     LOGGER.info("############### end perform test case ###################")
     LOGGER.info("done,checking the log %s", LOG_FILE)
     # parse cases_result for testapi and push it
     testapi_result = generate_testapi_result(cases_result)
     PushResults(testapi_result, LOGGER)
+    cases_result.clear()
     return True

@@ -10,3 +10,4 @@ cover
 docs_output
 .tox
 docs/_build/*
+./hdv/redfish/result/*.yaml

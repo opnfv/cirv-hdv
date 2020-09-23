@@ -1,0 +1,560 @@
+---
+- case_name: get asset code
+  case_sn: 0
+  enabled: false
+  expected_code: 200
+  expected_result:
+    AssetTag: CM_cc@1234
+  group: asset managment
+  header: null
+  key_flag_dict:
+    system_id: Members
+  method: GET
+  request_body: null
+  url: /redfish/v1/Systems/{system_id}/
+- case_name: check main board name
+  case_sn: 8
+  details_result: '{''count'': ''N/A for this case'', ''info'': [{''return_code'':
+    ''Success'', ''Oem'': "Failure, expect value: {''Mainboard'': {''BoardName'':
+    ''RS33M2C9S''}}, return value: Can''t find key Oem in return value"}]}'
+  enabled: true
+  expected_code: 200
+  expected_result:
+    Oem:
+      Mainboard:
+        BoardName: RS33M2C9S
+  final_rst: Failure
+  group: asset managment
+  header: null
+  key_flag_dict:
+    chassis_id: Members
+  method: GET
+  request_body: null
+  return_code_seq: '[200]'
+  url: /redfish/v1/Chassis/{chassis_id}/
+- case_name: check CPU amount
+  case_sn: 11
+  details_result: '{''count'': ''N/A for this case'', ''info'': [{''return_code'':
+    ''Success'', ''Members@odata.count'': ''Failure, expect value: 2, return value:
+    3''}]}'
+  enabled: true
+  expected_code: 200
+  expected_result:
+    Members@odata.count: 2
+  final_rst: Failure
+  group: compoment management
+  header: null
+  key_flag_dict:
+    system_id: Members
+  method: GET
+  request_body: null
+  return_code_seq: '[200]'
+  url: /redfish/v1/Systems/{system_id}/Processors/
+- case_name: check CPU info
+  case_sn: 2
+  details_result: '{''count'': ''Failure, the actual num is 3'', ''info'': [{''return_code'':
+    ''Success'', ''Manufacturer'': ''Success'', ''MaxSpeedMHz'': ''Failure, expect
+    value: 2300, return value: 3700'', ''Model'': ''Failure, expect value: Intel(R)
+    Xeon(R) Gold 5218N CPU @ 2.30GHz, return value: Multi-Core Intel(R) Xeon(R) processor
+    7xxx Series'', ''ProcessorArchitecture'': ''Success'', ''Socket'': ''Failure,
+    expect value: [1, 2], return value: CPU 1'', ''Status'': {''Health'': ''Success'',
+    ''State'': ''Success''}, ''TotalCores'': ''Failure, expect value: 16, return value:
+    8'', ''TotalThreads'': ''Failure, expect value: 32, return value: 16''}, {''return_code'':
+    ''Success'', ''Manufacturer'': "Failure, expect value: Intel(R) Corporation, return
+    value: Can''t find key Manufacturer in return value", ''MaxSpeedMHz'': "Failure,
+    expect value: 2300, return value: Can''t find key MaxSpeedMHz in return value",
+    ''Model'': "Failure, expect value: Intel(R) Xeon(R) Gold 5218N CPU @ 2.30GHz,
+    return value: Can''t find key Model in return value", ''ProcessorArchitecture'':
+    "Failure, expect value: [''x86'', ''IA-64'', ''ARM'', ''MIPS'', ''OEM''], return
+    value: Can''t find key ProcessorArchitecture in return value", ''Socket'': ''Failure,
+    expect value: [1, 2], return value: CPU 2'', ''Status'': {''Health'': "Failure,
+    expect value: OK, return value: Can''t find key Health in return value", ''State'':
+    ''Failure, expect value: Enabled, return value: Absent''}, ''TotalCores'': "Failure,
+    expect value: 16, return value: Can''t find key TotalCores in return value", ''TotalThreads'':
+    "Failure, expect value: 32, return value: Can''t find key TotalThreads in return
+    value"}, {''return_code'': ''Success'', ''Manufacturer'': ''Success'', ''MaxSpeedMHz'':
+    "Failure, expect value: 2300, return value: Can''t find key MaxSpeedMHz in return
+    value", ''Model'': ''Failure, expect value: Intel(R) Xeon(R) Gold 5218N CPU @
+    2.30GHz, return value: Stratix 10'', ''ProcessorArchitecture'': ''Success'', ''Socket'':
+    "Failure, expect value: [1, 2], return value: Can''t find key Socket in return
+    value", ''Status'': {''Health'': ''Success'', ''State'': ''Success''}, ''TotalCores'':
+    "Failure, expect value: 16, return value: Can''t find key TotalCores in return
+    value", ''TotalThreads'': "Failure, expect value: 32, return value: Can''t find
+    key TotalThreads in return value"}]}'
+  enabled: true
+  expected_code: 200
+  expected_result:
+    Manufacturer: Intel(R) Corporation
+    MaxSpeedMHz: 2300
+    Model: Intel(R) Xeon(R) Gold 5218N CPU @ 2.30GHz
+    ProcessorArchitecture:
+    - x86
+    - IA-64
+    - ARM
+    - MIPS
+    - OEM
+    Socket:
+    - 1
+    - 2
+    Status:
+      Health: OK
+      State: Enabled
+    TotalCores: 16
+    TotalThreads: 32
+    count: 2
+  final_rst: Failure
+  group: compoment management
+  header: null
+  key_flag_dict:
+    cpu_id: Members
+    system_id: Members
+  method: GET
+  request_body: null
+  return_code_seq: '[200, 200, 200]'
+  url: /redfish/v1/Systems/{system_id}/Processors/{cpu_id}/
+- case_name: set asset code
+  case_sn: 1
+  details_result: '{''count'': ''N/A for this case'', ''info'': [{''return_code'':
+    ''Failure'', ''AssetTag'': "Failure, expect value: CM_cc@1234, return value: Can''t
+    find key AssetTag in return value"}]}'
+  enabled: true
+  expected_code: 200
+  expected_result:
+    AssetTag: CM_cc@1234
+  final_rst: Failure
+  group: asset managment
+  header: null
+  key_flag_dict:
+    system_id: Members
+  method: PATCH
+  request_body: '{"AssetTag": "CM_cc@1234"}'
+  return_code_seq: '[''N/A'']'
+  url: /redfish/v1/Systems/{system_id}/
+- case_name: set host name
+  case_sn: 3
+  details_result: '{''count'': ''N/A for this case'', ''info'': [{''return_code'':
+    ''Failure'', ''HostName'': "Failure, expect value: NFV-RPZJHZ-01B, return value:
+    Can''t find key HostName in return value"}]}'
+  enabled: true
+  expected_code: 200
+  expected_result:
+    HostName: NFV-RPZJHZ-01B
+  final_rst: Failure
+  group: asset managment
+  header: null
+  key_flag_dict:
+    system_id: Members
+  method: PATCH
+  request_body: '{"HostName": "NFV-RPZJHZ-01B"}'
+  return_code_seq: '[''N/A'']'
+  url: /redfish/v1/Systems/{system_id}/
+- case_name: check host name
+  case_sn: 4
+  details_result: '{''count'': ''N/A for this case'', ''info'': [{''return_code'':
+    ''Success'', ''HostName'': ''Failure, expect value: NFV-RPZJHZ-01B, return value:
+    web483''}]}'
+  enabled: true
+  expected_code: 200
+  expected_result:
+    HostName: NFV-RPZJHZ-01B
+  final_rst: Failure
+  group: asset managment
+  header: null
+  key_flag_dict:
+    system_id: Members
+  method: GET
+  request_body: null
+  return_code_seq: '[200]'
+  url: /redfish/v1/Systems/{system_id}/
+- case_name: check manufacturer
+  case_sn: 5
+  details_result: '{''count'': ''N/A for this case'', ''info'': [{''return_code'':
+    ''Success'', ''Manufacturer'': ''Failure, expect value: New H3C Technologies Co.,
+    Ltd., return value: Contoso''}]}'
+  enabled: true
+  expected_code: 200
+  expected_result:
+    Manufacturer: New H3C Technologies Co., Ltd.
+  final_rst: Failure
+  group: asset managment
+  header: null
+  key_flag_dict:
+    system_id: Members
+  method: GET
+  request_body: null
+  return_code_seq: '[200]'
+  url: /redfish/v1/Systems/{system_id}/
+- case_name: check model
+  case_sn: 6
+  details_result: '{''count'': ''N/A for this case'', ''info'': [{''return_code'':
+    ''Success'', ''Model'': ''Failure, expect value: UniServer R4900 G3, return value:
+    3500''}]}'
+  enabled: true
+  expected_code: 200
+  expected_result:
+    Model: UniServer R4900 G3
+  final_rst: Failure
+  group: asset managment
+  header: null
+  key_flag_dict:
+    system_id: Members
+  method: GET
+  request_body: null
+  return_code_seq: '[200]'
+  url: /redfish/v1/Systems/{system_id}/
+- case_name: check serial number
+  case_sn: 7
+  details_result: '{''count'': ''N/A for this case'', ''info'': [{''return_code'':
+    ''Success'', ''SerialNumber'': ''Success''}]}'
+  enabled: true
+  expected_code: 200
+  expected_result:
+    SerialNumber: N/A
+  final_rst: Success
+  group: asset managment
+  header: null
+  key_flag_dict:
+    system_id: Members
+  method: GET
+  request_body: null
+  return_code_seq: '[200]'
+  url: /redfish/v1/Systems/{system_id}/
+- case_name: check main board name
+  case_sn: 8
+  details_result: '{''count'': ''N/A for this case'', ''info'': [{''return_code'':
+    ''Success'', ''Oem'': "Failure, expect value: {''Mainboard'': {''BoardName'':
+    ''RS33M2C9S''}}, return value: Can''t find key Oem in return value"}]}'
+  enabled: true
+  expected_code: 200
+  expected_result:
+    Oem:
+      Mainboard:
+        BoardName: RS33M2C9S
+  final_rst: Failure
+  group: asset managment
+  header: null
+  key_flag_dict:
+    chassis_id: Members
+  method: GET
+  request_body: null
+  return_code_seq: '[200]'
+  url: /redfish/v1/Chassis/{chassis_id}/
+- case_name: check main board serial number
+  case_sn: 9
+  details_result: '{''count'': ''N/A for this case'', ''info'': [{''return_code'':
+    ''Success'', ''Oem'': "Failure, expect value: {''Mainboard'': {''SerialNumber'':
+    ''N/A''}}, return value: Can''t find key Oem in return value"}]}'
+  enabled: true
+  expected_code: 200
+  expected_result:
+    Oem:
+      Mainboard:
+        SerialNumber: N/A
+  final_rst: Failure
+  group: asset managment
+  header: null
+  key_flag_dict:
+    chassis_id: Members
+  method: GET
+  request_body: null
+  return_code_seq: '[200]'
+  url: /redfish/v1/Chassis/{chassis_id}/
+- case_name: check BIOS version
+  case_sn: 10
+  details_result: '{''count'': ''N/A for this case'', ''info'': [{''return_code'':
+    ''Success'', ''BiosVersion'': ''Failure, expect value: 2.00.35P01 V100R001B02D035SP01,
+    return value: P79 v1.45 (12/06/2017)''}]}'
+  enabled: true
+  expected_code: 200
+  expected_result:
+    BiosVersion: 2.00.35P01 V100R001B02D035SP01
+  final_rst: Failure
+  group: asset managment
+  header: null
+  key_flag_dict:
+    system_id: Members
+  method: GET
+  request_body: null
+  return_code_seq: '[200]'
+  url: /redfish/v1/Systems/{system_id}/
+- case_name: check CPU amount
+  case_sn: 11
+  details_result: '{''count'': ''N/A for this case'', ''info'': [{''return_code'':
+    ''Success'', ''Members@odata.count'': ''Failure, expect value: 2, return value:
+    3''}]}'
+  enabled: true
+  expected_code: 200
+  expected_result:
+    Members@odata.count: 2
+  final_rst: Failure
+  group: compoment management
+  header: null
+  key_flag_dict:
+    system_id: Member
+  method: GET
+  request_body: null
+  return_code_seq: '[200]'
+  url: /redfish/v1/Systems/{system_id}/Processors/
+- case_name: check CPU info
+  case_sn: 12
+  details_result: '{''count'': ''Failure, the actual num is 3'', ''info'': [{''return_code'':
+    ''Success'', ''Manufacturer'': ''Success'', ''MaxSpeedMHz'': ''Failure, expect
+    value: 2300, return value: 3700'', ''Model'': ''Failure, expect value: Intel(R)
+    Xeon(R) Gold 5218N CPU @ 2.30GHz, return value: Multi-Core Intel(R) Xeon(R) processor
+    7xxx Series'', ''ProcessorArchitecture'': ''Success'', ''Socket'': ''Failure,
+    expect value: [1, 2], return value: CPU 1'', ''Status'': {''Health'': ''Success'',
+    ''State'': ''Success''}, ''TotalCores'': ''Failure, expect value: 16, return value:
+    8'', ''TotalThreads'': ''Failure, expect value: 32, return value: 16''}, {''return_code'':
+    ''Success'', ''Manufacturer'': "Failure, expect value: Intel(R) Corporation, return
+    value: Can''t find key Manufacturer in return value", ''MaxSpeedMHz'': "Failure,
+    expect value: 2300, return value: Can''t find key MaxSpeedMHz in return value",
+    ''Model'': "Failure, expect value: Intel(R) Xeon(R) Gold 5218N CPU @ 2.30GHz,
+    return value: Can''t find key Model in return value", ''ProcessorArchitecture'':
+    "Failure, expect value: [''x86'', ''IA-64'', ''ARM'', ''MIPS'', ''OEM''], return
+    value: Can''t find key ProcessorArchitecture in return value", ''Socket'': ''Failure,
+    expect value: [1, 2], return value: CPU 2'', ''Status'': {''Health'': "Failure,
+    expect value: OK, return value: Can''t find key Health in return value", ''State'':
+    ''Failure, expect value: Enabled, return value: Absent''}, ''TotalCores'': "Failure,
+    expect value: 16, return value: Can''t find key TotalCores in return value", ''TotalThreads'':
+    "Failure, expect value: 32, return value: Can''t find key TotalThreads in return
+    value"}, {''return_code'': ''Success'', ''Manufacturer'': ''Success'', ''MaxSpeedMHz'':
+    "Failure, expect value: 2300, return value: Can''t find key MaxSpeedMHz in return
+    value", ''Model'': ''Failure, expect value: Intel(R) Xeon(R) Gold 5218N CPU @
+    2.30GHz, return value: Stratix 10'', ''ProcessorArchitecture'': ''Success'', ''Socket'':
+    "Failure, expect value: [1, 2], return value: Can''t find key Socket in return
+    value", ''Status'': {''Health'': ''Success'', ''State'': ''Success''}, ''TotalCores'':
+    "Failure, expect value: 16, return value: Can''t find key TotalCores in return
+    value", ''TotalThreads'': "Failure, expect value: 32, return value: Can''t find
+    key TotalThreads in return value"}]}'
+  enabled: true
+  expected_code: 200
+  expected_result:
+    Manufacturer: Intel(R) Corporation
+    MaxSpeedMHz: 2300
+    Model: Intel(R) Xeon(R) Gold 5218N CPU @ 2.30GHz
+    ProcessorArchitecture:
+    - x86
+    - IA-64
+    - ARM
+    - MIPS
+    - OEM
+    Socket:
+    - 1
+    - 2
+    Status:
+      Health: OK
+      State: Enabled
+    TotalCores: 16
+    TotalThreads: 32
+    count: 2
+  final_rst: Failure
+  group: compoment management
+  header: null
+  key_flag_dict:
+    cpu_id: Members
+    system_id: Members
+  method: GET
+  request_body: null
+  return_code_seq: '[200, 200, 200]'
+  url: /redfish/v1/Systems/{system_id}/Processors/{cpu_id}/
+- case_name: check memory mount
+  case_sn: 13
+  details_result: '{''count'': ''N/A for this case'', ''info'': [{''return_code'':
+    ''Success'', ''Members@odata.count'': ''Failure, expect value: 12, return value:
+    4''}]}'
+  enabled: true
+  expected_code: 200
+  expected_result:
+    Members@odata.count: 12
+  final_rst: Failure
+  group: compoment management
+  header: null
+  key_flag_dict:
+    system_id: Members
+  method: GET
+  request_body: null
+  return_code_seq: '[200]'
+  url: /redfish/v1/Systems/{system_id}/Memory/
+- case_name: check memory information
+  case_sn: 14
+  details_result: '{''count'': ''Failure, the actual num is 4'', ''info'': [{''return_code'':
+    ''Success'', ''BaseModuleType'': ''Success'', ''CapacityMiB'': ''Success'', ''DeviceLocator'':
+    ''Success'', ''Manufacturer'': "Failure, expect value: [''Hynix Semiconductor'',
+    ''Micron''], return value: Can''t find key Manufacturer in return value", ''MemoryDeviceType'':
+    ''Success'', ''OperatingSpeedMhz'': "Failure, expect value: 2666, return value:
+    Can''t find key OperatingSpeedMhz in return value", ''PartNumber'': "Failure,
+    expect value: [''HMA84GR7AFR4N-VK'', ''36ASF4G72PZ-2G6D1''], return value: Can''t
+    find key PartNumber in return value", ''Status'': {''Health'': ''Success'', ''State'':
+    ''Success''}}, {''return_code'': ''Success'', ''BaseModuleType'': ''Success'',
+    ''CapacityMiB'': ''Success'', ''DeviceLocator'': ''Success'', ''Manufacturer'':
+    "Failure, expect value: [''Hynix Semiconductor'', ''Micron''], return value: Can''t
+    find key Manufacturer in return value", ''MemoryDeviceType'': ''Success'', ''OperatingSpeedMhz'':
+    "Failure, expect value: 2666, return value: Can''t find key OperatingSpeedMhz
+    in return value", ''PartNumber'': "Failure, expect value: [''HMA84GR7AFR4N-VK'',
+    ''36ASF4G72PZ-2G6D1''], return value: Can''t find key PartNumber in return value",
+    ''Status'': {''Health'': ''Success'', ''State'': ''Success''}}, {''return_code'':
+    ''Success'', ''BaseModuleType'': ''Success'', ''CapacityMiB'': ''Success'', ''DeviceLocator'':
+    ''Success'', ''Manufacturer'': "Failure, expect value: [''Hynix Semiconductor'',
+    ''Micron''], return value: Can''t find key Manufacturer in return value", ''MemoryDeviceType'':
+    ''Success'', ''OperatingSpeedMhz'': "Failure, expect value: 2666, return value:
+    Can''t find key OperatingSpeedMhz in return value", ''PartNumber'': "Failure,
+    expect value: [''HMA84GR7AFR4N-VK'', ''36ASF4G72PZ-2G6D1''], return value: Can''t
+    find key PartNumber in return value", ''Status'': {''Health'': ''Success'', ''State'':
+    ''Success''}}, {''return_code'': ''Success'', ''BaseModuleType'': "Failure, expect
+    value: RDIMM, return value: Can''t find key BaseModuleType in return value", ''CapacityMiB'':
+    "Failure, expect value: 32768, return value: Can''t find key CapacityMiB in return
+    value", ''DeviceLocator'': ''Success'', ''Manufacturer'': "Failure, expect value:
+    [''Hynix Semiconductor'', ''Micron''], return value: Can''t find key Manufacturer
+    in return value", ''MemoryDeviceType'': "Failure, expect value: DDR4, return value:
+    Can''t find key MemoryDeviceType in return value", ''OperatingSpeedMhz'': "Failure,
+    expect value: 2666, return value: Can''t find key OperatingSpeedMhz in return
+    value", ''PartNumber'': "Failure, expect value: [''HMA84GR7AFR4N-VK'', ''36ASF4G72PZ-2G6D1''],
+    return value: Can''t find key PartNumber in return value", ''Status'': {''Health'':
+    "Failure, expect value: OK, return value: Can''t find key Health in return value",
+    ''State'': ''Failure, expect value: Enabled, return value: Absent''}}]}'
+  enabled: true
+  expected_code: 200
+  expected_result:
+    BaseModuleType: RDIMM
+    CapacityMiB: 32768
+    DeviceLocator: N/A
+    Manufacturer:
+    - Hynix Semiconductor
+    - Micron
+    MemoryDeviceType: DDR4
+    OperatingSpeedMhz: 2666
+    PartNumber:
+    - HMA84GR7AFR4N-VK
+    - 36ASF4G72PZ-2G6D1
+    Status:
+      Health: OK
+      State: Enabled
+    count: 12
+  final_rst: Failure
+  group: compoment management
+  header: null
+  key_flag_dict:
+    System_id: Members
+    memory_id: Members
+  method: GET
+  request_body: null
+  return_code_seq: '[200, 200, 200, 200]'
+  url: /redfish/v1/Systems/{system_id}/Memory/{memory_id}/
+- case_name: check fans information
+  case_sn: 20
+  details_result: '{''count'': ''N/A for this case'', ''info'': [{''return_code'':
+    ''Success'', ''FanSummary'': "Failure, expect value: {''Count'': 6, ''Fans'':
+    [{''MemberId'': ''N/A'', ''Oem'': {''Public'': {''SpeedRatio'': ''N/A''}}, ''Status'':
+    {''Health'': ''OK'', ''State'': ''Enabled''}}, {''MemberId'': ''N/A'', ''Oem'':
+    {''Public'': {''SpeedRatio'': ''N/A''}}, ''Status'': {''Health'': ''OK'', ''State'':
+    ''Enabled''}}, {''MemberId'': ''N/A'', ''Oem'': {''Public'': {''SpeedRatio'':
+    ''N/A''}}, ''Status'': {''Health'': ''OK'', ''State'': ''Enabled''}}, {''MemberId'':
+    ''N/A'', ''Oem'': {''Public'': {''SpeedRatio'': ''N/A''}}, ''Status'': {''Health'':
+    ''OK'', ''State'': ''Enabled''}}, {''MemberId'': ''N/A'', ''Oem'': {''Public'':
+    {''SpeedRatio'': ''N/A''}}, ''Status'': {''Health'': ''OK'', ''State'': ''Enabled''}},
+    {''MemberId'': ''N/A'', ''Oem'': {''Public'': {''SpeedRatio'': ''N/A''}}, ''Status'':
+    {''Health'': ''OK'', ''State'': ''Enabled''}}]}, return value: Can''t find key
+    FanSummary in return value"}]}'
+  enabled: true
+  expected_code: 200
+  expected_result:
+    FanSummary:
+      Count: 6
+      Fans:
+      - MemberId: N/A
+        Oem:
+          Public:
+            SpeedRatio: N/A
+        Status:
+          Health: OK
+          State: Enabled
+      - MemberId: N/A
+        Oem:
+          Public:
+            SpeedRatio: N/A
+        Status:
+          Health: OK
+          State: Enabled
+      - MemberId: N/A
+        Oem:
+          Public:
+            SpeedRatio: N/A
+        Status:
+          Health: OK
+          State: Enabled
+      - MemberId: N/A
+        Oem:
+          Public:
+            SpeedRatio: N/A
+        Status:
+          Health: OK
+          State: Enabled
+      - MemberId: N/A
+        Oem:
+          Public:
+            SpeedRatio: N/A
+        Status:
+          Health: OK
+          State: Enabled
+      - MemberId: N/A
+        Oem:
+          Public:
+            SpeedRatio: N/A
+        Status:
+          Health: OK
+          State: Enabled
+  final_rst: Failure
+  group: compoment management
+  header: null
+  key_flag_dict:
+    chassis_id: Members
+  method: GET
+  request_body: null
+  return_code_seq: '[200]'
+  url: /redfish/v1/Chassis/{chassis_id}/Thermal/
+- case_name: check power amount
+  case_sn: 21
+  details_result: '{''count'': ''N/A for this case'', ''info'': [{''return_code'':
+    ''Success'', ''DeviceMaxNum'': "Failure, expect value: {''PowerSupplyNum'': 2},
+    return value: Can''t find key DeviceMaxNum in return value"}]}'
+  enabled: true
+  expected_code: 200
+  expected_result:
+    DeviceMaxNum:
+      PowerSupplyNum: 2
+  final_rst: Failure
+  group: compoment management
+  header: null
+  key_flag_dict:
+    chassis_id: MemberId
+  method: GET
+  request_body: null
+  return_code_seq: '[200]'
+  url: /redfish/v1/Chassis/{chassis_id}/
+- case_name: check cpu temperature
+  case_sn: 25
+  details_result: '{''count'': ''N/A for this case'', ''info'': [{''return_code'':
+    ''Success'', ''Temperatures'': [{''Name'': ''Failure, expect value: INPUT_TEMP,
+    return value: CPU1 Temp'', ''ReadingCelsius'': ''Success''}, {''Name'': ''Failure,
+    expect value: CPU1_TEMP, return value: CPU2 Temp'', ''ReadingCelsius'': ''Success''},
+    {''Name'': ''Failure, expect value: CPU2_TEMP, return value: Chassis Intake Temp'',
+    ''ReadingCelsius'': ''Success''}]}]}'
+  enabled: true
+  expected_code: 200
+  expected_result:
+    Temperatures:
+    - Name: INPUT_TEMP
+      ReadingCelsius: N/A
+    - Name: CPU1_TEMP
+      ReadingCelsius: N/A
+    - Name: CPU2_TEMP
+      ReadingCelsius: N/A
+  final_rst: Failure
+  group: sensor management
+  header: null
+  key_flag_dict:
+    chassis_id: Member
+  method: GET
+  request_body: null
+  return_code_seq: '[200]'
+  url: /redfish/v1/Chassis/{chassis_id}/Thermal/
