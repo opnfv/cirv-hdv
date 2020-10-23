@@ -516,9 +516,13 @@ def write_result_2_yaml(result, bmc_ip):
     '''
     write test result to new report.yaml
     '''
-    LOGGER.info("writing to yaml file")
+    if not os.path.exists('result'):
+        os.makedirs('result')
     
-    yaml.safe_dump(result, open("./result/"+bmc_ip+time.ctime()+"_report.yaml", "w"),
+    report_file = "./result/"+bmc_ip+"_"+str(time.time())+"_report.yaml"
+    LOGGER.info("writing to yaml file %s", report_file)
+    
+    yaml.safe_dump(result, open(report_file, "w"),
                    explicit_start=True)
 
 def generate_testapi_result(cases_result):
@@ -534,7 +538,7 @@ def generate_testapi_result(cases_result):
 
     return testapi_result
 
-@pytest.fixture('session')
+@pytest.fixture(scope='session')
 def config_list(request):
     return request.param
 
