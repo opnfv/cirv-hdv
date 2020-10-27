@@ -24,7 +24,7 @@ from http_handler import UrllibHttpHandler, HEADERS
 from log_utils import BASE_DIR, LOG_FILE, LOGGER
 from errors import ERROR_CODE, WARN_CODE
 from test_api import PushResults
-
+import allure
 LOGGER.info(BASE_DIR)
 
 ACCOUNT_INFO = {}
@@ -473,12 +473,19 @@ def read_yaml(file):
         return None
     return yaml.load(open(file, "r"))
 
+def generate_description(case):
+    description=""
+    for key,value in case.items():
+        description= description + str(key) +" : "+str(value)+"<br>"
+    return description
 
 def test_case_yaml_run(run, case):
     '''
     run test case from cases.yaml
     '''
     depends_id, http_handler, bmc_ip = run
+    allure.dynamic.title(bmc_ip+'" _ '+case["case_name"])
+    allure.dynamic.description(generate_description(case))
     if(case['enabled'] is False):
         cases_result.append(case)
         LOGGER.debug("skipping case: %s", case["case_name"])
