@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "16472a0d_f321a44d",
+        "filename": "hdv/redfish/hdv_redfish.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 488,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2020-10-29T08:55:16Z",
+      "side": 1,
+      "message": "by this way, it will contain detail information in the report. Good.",
+      "range": {
+        "startLine": 488,
+        "startChar": 58,
+        "endLine": 488,
+        "endChar": 1
+      },
+      "revId": "8315c97a407d657ec81180e60f25c4d78b93e7e5",
+      "serverId": "bbac25d2-bf60-4904-9ba8-a72fc000d6c5",
+      "unresolved": true
+    }
+  ]
+}
