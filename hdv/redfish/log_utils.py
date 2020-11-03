@@ -12,7 +12,7 @@ define the LOGGER settings
 import logging
 import sys
 
-BASE_DIR = sys.path[0]+"/hdv/redfish"
+BASE_DIR = sys.path[0]
 LOG_FILE = BASE_DIR + "/" + "logs" + "/" + 'hdv.log'
 
 LOGGER = logging.getLogger("redfish")
