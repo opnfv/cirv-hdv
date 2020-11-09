@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "53507a2d_be144a49",
+        "filename": "docs/development/index.rst",
+        "patchSetId": 3
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 7617
+      },
+      "writtenOn": "2020-11-09T01:40:32Z",
+      "side": 1,
+      "message": "add instruction of pdf2.0 comply the CNTT-RI requirement.",
+      "range": {
+        "startLine": 60,
+        "startChar": 57,
+        "endLine": 60,
+        "endChar": 67
+      },
+      "revId": "1aa69b253386a51eae47df8151cb1424f7f4a130",
+      "serverId": "bbac25d2-bf60-4904-9ba8-a72fc000d6c5",
+      "unresolved": true
+    }
+  ]
+}
